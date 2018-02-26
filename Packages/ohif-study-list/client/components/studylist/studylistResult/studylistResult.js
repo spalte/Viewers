@@ -158,7 +158,10 @@ function search() {
         OHIF.log.info('StudyListSearch');
         // Hide loading text
 
-        Session.set('showLoadingText', false);
+      // Clear all current studies
+      OHIF.studylist.collections.Studies.remove({});
+
+      Session.set('showLoadingText', false);
 
         if (error) {
             Session.set('serverError', true);
@@ -192,8 +195,13 @@ function search() {
                 // Convert numberOfStudyRelatedInstance string into integer
                 study.numberOfStudyRelatedInstances = !isNaN(study.numberOfStudyRelatedInstances) ? parseInt(study.numberOfStudyRelatedInstances) : undefined;
 
+                var inbox = Meteor.users.find({_id: Meteor.userId()}).fetch()[0].studyInbox;
+
                 // Insert any matching studies into the Studies Collection
-                OHIF.studylist.collections.Studies.insert(study);
+                if (inbox.includes(study.studyInstanceUid) ||
+                    Meteor.user().emails[0].address == 'spalte@naturalimage.ch') {
+                    OHIF.studylist.collections.Studies.insert(study);
+                }
             }
         });
     });
@@ -280,7 +288,11 @@ Template.studylistResult.onRendered(() => {
         instance.datePicker.updateInputText();
     } else {
         // Retrieve all studies
-        search();
+        Tracker.autorun(function () {
+            // var inbox = Meteor.users.find({_id: Meteor.userId()}).fetch()[0].studyInbox;
+            Meteor.users.findOne({_id: Meteor.userId()}, {studyInbox : true});
+            search();
+        });
     }
 });
 

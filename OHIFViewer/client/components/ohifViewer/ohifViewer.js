@@ -70,3 +70,7 @@ Template.ohifViewer.helpers({
         return instance.hasViewerData ? 'Back to viewer' : '';
     }
 });
+
+Template.ohifViewer.helpers({
+    userName: OHIF.user.getName,
+});
