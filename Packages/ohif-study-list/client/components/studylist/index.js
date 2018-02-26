@@ -12,3 +12,6 @@ import './studylistResult/studylistResult.styl';
 import './studylistToolbar/studylistToolbar.html';
 import './studylistToolbar/studylistToolbar.js';
 import './studylistToolbar/studylistToolbar.styl';
+
+import './studylistShare/studylistShare.html';
+import './studylistShare/studylistShare.js';

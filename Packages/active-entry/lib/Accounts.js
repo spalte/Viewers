@@ -43,6 +43,8 @@ if (Meteor.isServer){
       user.profile = options.profile;
     }
 
+    user.studyInbox = [];
+
     return user;
   });
 }
