@@ -22,6 +22,11 @@ Template.ohifViewer.onCreated(() => {
         action: () => OHIF.ui.showDialog('aboutModal'),
         text: 'About',
         icon: 'fa fa-info'
+    }, {
+        action: OHIF.user.logout,
+        text: 'Logout',
+        iconClasses: 'logout',
+        iconSvgUse: 'packages/ohif_user-management/assets/user-menu-icons.svg#logout'
     }]);
 
     instance.autorun(() => {
