@@ -22,7 +22,8 @@ Package.onUse(function(api) {
         'ohif:servers',
         'ohif:dicom-services',
         'ohif:viewerbase',
-        'ohif:wadoproxy'
+        'ohif:wadoproxy',
+        'naturalimage:kheops'
     ]);
 
     // Client and server imports

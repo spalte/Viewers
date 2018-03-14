@@ -1,4 +1,5 @@
 import { OHIF } from 'meteor/ohif:core';
+import { KHEOPS } from 'meteor/naturalimage:kheops'
 
 /**
  * Creates a QIDO date string for a date range query
@@ -98,6 +99,8 @@ function resultDataToStudies(resultData) {
 
 OHIF.studies.services.QIDO.Studies = (server, filter) => {
     const url = filterToQIDOURL(server, filter);
+
+    console.log(KHEOPS.getUserAuthToken());
 
     try {
         const result = DICOMWeb.getJSON(url, server.requestOptions);
