@@ -1,5 +1,4 @@
 import { OHIF } from 'meteor/ohif:core';
-import { KHEOPS } from 'meteor/naturalimage:kheops'
 
 /**
  * Creates a QIDO date string for a date range query
