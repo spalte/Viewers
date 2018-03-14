@@ -182,6 +182,18 @@ Template.entrySignIn.events({
     var username = template.$("#signInLDAPUsernameInput").val();
     var password = template.$("#signInLDAPPasswordInput").val();
     ActiveEntry.loginWithLDAP(username, password);
+  },
+  'click [data-social-login]' ( event, template ) {
+    const service = event.target.getAttribute( 'data-social-login' ),
+          options = {
+            requestPermissions: [ 'email' ]
+          };
+
+    Meteor[ service ]( options, ( error ) => {
+      if ( error ) {
+          OHIF.log.error(error);
+      }
+    });
   }
 });
 

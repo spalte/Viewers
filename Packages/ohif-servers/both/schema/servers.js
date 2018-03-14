@@ -255,6 +255,32 @@ export const PublicServerConfig = new SimpleSchema({
     }
 });
 
+export const GoogleOAuthKeys = new SimpleSchema({
+    clientId: {
+        type: String,
+        label: 'Google Client Id'
+    },
+    secret: {
+        type: String,
+        label: 'Google Client Secret'
+    }
+});
+
+export const OAuthKeys = new SimpleSchema({
+    google: {
+        type: GoogleOAuthKeys,
+        label: 'Google OAuth Keys'
+    }
+});
+
+
+export const PrivateServerConfig = new SimpleSchema({
+    oAuth: {
+        type: OAuthKeys,
+        label: 'OAuth keys'
+    }
+});
+
 export const Servers = new SimpleSchema({
     dicomWeb: {
         type: [DICOMWebServer],
@@ -286,6 +312,10 @@ export const ServerConfiguration = new SimpleSchema({
     public: {
         type: PublicServerConfig,
         label: 'Public Server Configuration',
+    },
+    private: {
+        type: PrivateServerConfig,
+        label: "Private Server Configuration"
     },
     origin: {
         type: String,
