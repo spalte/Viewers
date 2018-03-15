@@ -68,6 +68,8 @@ Router.route(Settings.uri.replace(OHIF.utils.absoluteUrl(), ''), function() {
         return;
     }
 
+    let seriesUID = WADOProxy.seriesFromWadoURL(wadoUrl);
+
     if (requestOpt.logRequests) {
         console.log(request.url);
     }

@@ -9,6 +9,10 @@ KHEOPS.subFromJWT = function (jwt) {
     return payloadObject['sub'];
 }
 
+KHEOPS.getSeriesAuthToken = function (seriesUID) {
+
+}
+
 // returns a JWT access token from the Authorization server.
 KHEOPS.getUserAuthToken = function() {
 
