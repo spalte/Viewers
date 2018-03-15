@@ -26,7 +26,7 @@ function dateToString(date) {
  * @param filter
  * @returns {string} The URL with encoded filter query data
  */
-function filterToQIDOURL(server, filter) {
+function filterToQIDOURL(server, filter, user = undefined) {
     const commaSeparatedFields = [
         '00081030', // Study Description
         '00080060' //Modality
@@ -58,7 +58,12 @@ function filterToQIDOURL(server, filter) {
         parameters.StudyInstanceUID = studyUids;
     }
 
-    return server.qidoRoot + '/studies?' + encodeQueryData(parameters);
+    let userPath = '';
+    if (user) {
+        userPath = '/' + user;
+    }
+
+    return server.qidoRoot + userPath + '/studies?' + encodeQueryData(parameters);
 }
 
 /**
@@ -97,12 +102,18 @@ function resultDataToStudies(resultData) {
 }
 
 OHIF.studies.services.QIDO.Studies = (server, filter) => {
-    const url = filterToQIDOURL(server, filter);
+    let userAuthToken = KHEOPS.getUserAuthToken();
+    let sub = KHEOPS.subFromJWT(userAuthToken);
 
-    console.log(KHEOPS.getUserAuthToken());
+    const url = filterToQIDOURL(server, filter, sub);
+    let options = Object.assign(server.requestOptions, {});
+    if (!options.headers) {
+        options.headers = {};
+    }
+    options.headers['Authorization'] = 'Bearer ' + userAuthToken;
 
     try {
-        const result = DICOMWeb.getJSON(url, server.requestOptions);
+        const result = DICOMWeb.getJSON(url, options);
 
         return resultDataToStudies(result.data);
     } catch (error) {

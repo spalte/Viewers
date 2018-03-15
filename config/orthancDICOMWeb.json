@@ -4,7 +4,7 @@
       {
         "name": "Orthanc",
         "wadoUriRoot": "http://localhost:8042/wado",
-        "qidoRoot": "http://localhost:8042/dicom-web",
+        "qidoRoot": "http://localhost:7575/dicom-web",
         "wadoRoot": "http://localhost:8042/dicom-web",
         "qidoSupportsIncludeField": false,
         "imageRendering": "wadouri",

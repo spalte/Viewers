@@ -1,6 +1,14 @@
 import { Meteor } from 'meteor/meteor'
 import { OHIF } from 'meteor/ohif:core';
 
+KHEOPS.subFromJWT = function (jwt) {
+    let payload = jwt.split('.')[1];
+    let payloadJSON = Buffer.from(payload, 'base64').toString();
+    let payloadObject = JSON.parse(payloadJSON);
+
+    return payloadObject['sub'];
+}
+
 // returns a JWT access token from the Authorization server.
 KHEOPS.getUserAuthToken = function() {
 
