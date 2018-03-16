@@ -68,7 +68,8 @@ Router.route(Settings.uri.replace(OHIF.utils.absoluteUrl(), ''), function() {
         return;
     }
 
-    let seriesUID = WADOProxy.seriesFromWadoURL(wadoUrl);
+    const seriesUID = WADOProxy.seriesFromWadoURL(wadoUrl);
+    const authToken = KHEOPS.getSeriesAuthToken(seriesUID, user);
 
     if (requestOpt.logRequests) {
         console.log(request.url);
@@ -85,7 +86,9 @@ Router.route(Settings.uri.replace(OHIF.utils.absoluteUrl(), ''), function() {
     // Create an object to hold the information required
     // for the request to the PACS.
     let options = {
-        headers: {},
+        headers: {
+            'Authorization': 'Bearer ' + authToken,
+        },
         method: request.method,
         hostname: parsed.hostname,
         path: parsed.path

@@ -1,5 +1,5 @@
 const querystring = require("querystring");
-const url = require("url");
+const { URL, URLSearchParams } = require('url');
 
 WADOProxy.convertURL = (url, serverConfiguration) => {
     if (!Settings.enabled) {
@@ -15,11 +15,9 @@ WADOProxy.convertURL = (url, serverConfiguration) => {
     return `${Settings.uri}?${query}`;
 }
 
-WADOProxy.seriesFromWadoURL = function (wadoURL) {
-    // find first instance of the term series in the url
-    let path = url.parse(wadoURL).pathname;
-
-    console.log(path);
-
-    return '1.1.1.1';
+WADOProxy.seriesFromWadoURL = function (wadoURLString) {
+    // this can be either WADO-URI or WADO-RS.
+    // it looks like everything goes through WADO-URI for now, so we pull out the query parameter
+    let wadoURL = new URL(wadoURLString);
+    return wadoURL.searchParams.get('seriesUID');
 }

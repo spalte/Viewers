@@ -9,8 +9,24 @@ KHEOPS.subFromJWT = function (jwt) {
     return payloadObject['sub'];
 }
 
-KHEOPS.getSeriesAuthToken = function (seriesUID) {
+KHEOPS.getSeriesAuthToken = function (seriesUID, user) {
+    // get the user's Oauth token
+    let googleOAuthIdToken = user.services.google.idToken;
 
+    let options = {
+        userJWT: googleOAuthIdToken,
+        scope: 'urn:naturalimage:seriesUID=urn:oid:' + seriesUID,
+    };
+
+    let result;
+    try {
+        result = makeTokenRequestSync('http://localhost:7575/token', options);
+    } catch (error) {
+        OHIF.log.trace();
+        throw error;
+    }
+
+    return result.data.access_token;
 }
 
 // returns a JWT access token from the Authorization server.
@@ -30,7 +46,6 @@ KHEOPS.getUserAuthToken = function() {
         OHIF.log.trace();
         throw error;
     }
-
 
     return result.data.access_token;
 }
@@ -56,11 +71,6 @@ function makeTokenRequest(geturl, options, callback) {
         method: 'POST'
     };
 
-    const postData = querystring.stringify({
-        'grant_type': 'urn:ietf:params:oauth:grant-type:jwt-bearer',
-        'assertion': options.userJWT
-    });
-
     let requester;
     if (parsed.protocol === 'https:') {
         requester = https.request;
@@ -78,6 +88,14 @@ function makeTokenRequest(geturl, options, callback) {
 
     if (options.auth) {
         requestOpt.auth = options.auth;
+    }
+
+    let postData = {
+        'grant_type': 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+        'assertion': options.userJWT
+    };
+    if (options.scope) {
+        postData.scope = options.scope;
     }
 
     if (options.headers) {
@@ -126,6 +144,6 @@ function makeTokenRequest(geturl, options, callback) {
         callback(new Meteor.Error('server-connection-error', requestError.message), null);
     });
 
-    req.write(postData);
+    req.write(querystring.stringify(postData));
     req.end();
 }
