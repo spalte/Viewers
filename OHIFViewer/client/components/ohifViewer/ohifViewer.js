@@ -22,6 +22,11 @@ Template.ohifViewer.onCreated(() => {
         action: () => OHIF.ui.showDialog('aboutModal'),
         text: 'About',
         icon: 'fa fa-info'
+    }, {
+        action: () => Meteor.logout(),
+        text: 'Logout',
+        iconClasses: 'logout',
+        // iconSvgUse: 'packages/ohif_user-management/assets/user-menu-icons.svg#logout'
     }]);
 
     instance.autorun(() => {
@@ -69,4 +74,15 @@ Template.ohifViewer.helpers({
 
         return instance.hasViewerData ? 'Back to viewer' : '';
     }
+});
+
+Template.ohifViewer.helpers({
+    userName: () => {
+        if (Meteor.user()) {
+            return Meteor.user().profile.name;
+        } else {
+            return '';
+        }
+    },
+    // userName: OHIF.user.getName,
 });
