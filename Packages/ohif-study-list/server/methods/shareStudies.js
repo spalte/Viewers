@@ -18,14 +18,12 @@ Meteor.methods({
 
         studies.forEach((study) => {
             KHEOPS.shareStudyWithUser(study, targetId);
-        })
-
-        // Meteor.users.update({'emails': {'$elemMatch': {'address': username}}},
-        //                            {'$addToSet': {'studyInbox': {'$each': studies}}});
+        });
     },
+
     'studyList.deleteStudies'(studies) {
-        // console.log(studies);
-        // Meteor.users.update({'_id': Meteor.userId()},
-        //                            {'$pullAll': {'studyInbox': studies}});
+        studies.forEach((study) => {
+            KHEOPS.deleteStudy(study);
+        });
     },
 });

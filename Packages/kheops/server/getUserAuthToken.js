@@ -9,7 +9,7 @@ KHEOPS.subFromJWT = function (jwt) {
     return payloadObject['sub'];
 }
 
-KHEOPS.shareStudyWithUser = function (studyInstanceIUD, user) {
+KHEOPS.shareStudyWithUser = function (studyInstanceUID, user) {
 
     let authToken = KHEOPS.getUserAuthToken();
 
@@ -21,7 +21,26 @@ KHEOPS.shareStudyWithUser = function (studyInstanceIUD, user) {
     };
 
     try {
-        makeTokenRequestSync('http://localhost:7575/users/' + user + '/studies/' + studyInstanceIUD, options);
+        makeTokenRequestSync('http://localhost:7575/users/' + user + '/studies/' + studyInstanceUID, options);
+    } catch (error) {
+        OHIF.log.trace();
+        throw error;
+    }
+}
+
+KHEOPS.deleteStudy = function (studyInstanceUID) {
+    let authToken = KHEOPS.getUserAuthToken();
+    let userId = Meteor.user().services.google.id;
+
+    let options = {
+        method: 'DELETE',
+        headers: {
+            'Authorization': 'Bearer ' + authToken,
+        }
+    };
+
+    try {
+        makeTokenRequestSync('http://localhost:7575/users/' + userId + '/studies/' + studyInstanceUID, options);
     } catch (error) {
         OHIF.log.trace();
         throw error;
