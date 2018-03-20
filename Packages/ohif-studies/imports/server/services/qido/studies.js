@@ -60,7 +60,7 @@ function filterToQIDOURL(server, filter, user = undefined) {
 
     let userPath = '';
     if (user) {
-        userPath = '/' + user;
+        userPath = '/users/' + user;
     }
 
     return server.qidoRoot + userPath + '/studies?' + encodeQueryData(parameters);

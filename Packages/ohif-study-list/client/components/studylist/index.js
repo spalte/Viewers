@@ -1,6 +1,9 @@
 import './studylist.html';
 import './studylist.styl';
 
+import './studylistShare/studylistShare.html';
+import './studylistShare/studylistShare.js';
+
 import './studylistStudy/studylistStudy.html';
 import './studylistStudy/studylistStudy.js';
 import './studylistStudy/studylistStudy.styl';

@@ -1,0 +1,14 @@
+<template name="dialogShareStudies">
+    {{#dialogSimple (extend this
+        dialogClass='modal-sm'
+        title=(choose this.title 'Confirmation')
+    )}}
+        {{#form class='dialog-share-studies-form' api=this.api}}
+            <p>{{choose this.message 'Are you sure you want to perform this action?'}}</p>
+            {{>inputText labelClass='form-group' key='username'}}
+            <div>
+                {{#button class='btn btn-primary' action='save'}}Send{{/button}}
+            </div>
+        {{/form}}
+    {{/dialogSimple}}
+</template>

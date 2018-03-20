@@ -9,13 +9,44 @@ KHEOPS.subFromJWT = function (jwt) {
     return payloadObject['sub'];
 }
 
+KHEOPS.shareStudyWithUser = function (studyInstanceIUD, user) {
+
+    let authToken = KHEOPS.getUserAuthToken();
+
+    let options = {
+        method: 'PUT',
+        headers: {
+            'Authorization': 'Bearer ' + authToken,
+        }
+    };
+
+    try {
+        makeTokenRequestSync('http://localhost:7575/users/' + user + '/studies/' + studyInstanceIUD, options);
+    } catch (error) {
+        OHIF.log.trace();
+        throw error;
+    }
+}
+
 KHEOPS.getSeriesAuthToken = function (seriesUID, user) {
+    if (!user) {
+        user = Meteor.user();
+    }
+
     // get the user's Oauth token
     let googleOAuthIdToken = user.services.google.idToken;
 
     let options = {
         userJWT: googleOAuthIdToken,
-        scope: 'urn:naturalimage:seriesUID=urn:oid:' + seriesUID,
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        postData: {
+            'grant_type': 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+            'assertion': googleOAuthIdToken,
+            'scope': 'seriesInstanceUID=' + seriesUID,
+        },
     };
 
     let result;
@@ -37,7 +68,15 @@ KHEOPS.getUserAuthToken = function() {
 
     let options = {
         userJWT: googleOAuthIdToken,
-    };
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        postData: {
+            'grant_type': 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+            'assertion': googleOAuthIdToken,
+        },
+};
 
     let result;
     try {
@@ -63,10 +102,6 @@ function makeTokenRequest(geturl, options, callback) {
 
     let requestOpt = {
         hostname: parsed.hostname,
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
         path: parsed.path,
         method: 'POST'
     };
@@ -81,7 +116,6 @@ function makeTokenRequest(geturl, options, callback) {
         requester = http.request;
     }
 
-
     if (parsed.port) {
         requestOpt.port = parsed.port;
     }
@@ -90,28 +124,25 @@ function makeTokenRequest(geturl, options, callback) {
         requestOpt.auth = options.auth;
     }
 
-    let postData = {
-        'grant_type': 'urn:ietf:params:oauth:grant-type:jwt-bearer',
-        'assertion': options.userJWT
-    };
-    if (options.scope) {
-        postData.scope = options.scope;
+    if (options.method) {
+        requestOpt.method = options.method;
     }
 
+    const postData = options.postData;
+
     if (options.headers) {
-        Object.keys(options.headers).forEach(key => {
-            const value = options.headers[key];
-            requestOpt.headers[key] = value;
-        });
+        requestOpt.headers = Object.assign({}, options.headers);
     }
 
     const req = requester(requestOpt, function(resp) {
         // TODO: handle errors with 400+ code
-        const contentType = (resp.headers['content-type'] || '').split(';')[0];
-        if (jsonHeaders.indexOf(contentType) === -1) {
-            const errorMessage = `We only support json but "${contentType}" was sent by the server`;
-            callback(new Error(errorMessage), null);
-            return;
+        if (resp.statusCode != 204) {
+            const contentType = (resp.headers['content-type'] || '').split(';')[0];
+            if (jsonHeaders.indexOf(contentType) === -1) {
+                const errorMessage = `We only support json but "${contentType}" was sent by the server`;
+                callback(new Error(errorMessage), null);
+                return;
+            }
         }
 
         let output = '';
@@ -131,7 +162,11 @@ function makeTokenRequest(geturl, options, callback) {
         });
 
         resp.on('end', function(){
-            callback(null, { data: JSON.parse(output) });
+            if (output) {
+                callback(null, {data: JSON.parse(output)});
+            } else {
+                callback(null, null);
+            }
         });
     });
 
@@ -144,6 +179,8 @@ function makeTokenRequest(geturl, options, callback) {
         callback(new Meteor.Error('server-connection-error', requestError.message), null);
     });
 
-    req.write(querystring.stringify(postData));
+    if (postData) {
+        req.write(querystring.stringify(postData));
+    }
     req.end();
 }

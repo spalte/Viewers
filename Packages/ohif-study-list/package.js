@@ -37,6 +37,8 @@ Package.onUse(function(api) {
     api.use('ohif:wadoproxy');
     api.use('ohif:studies');
 
+    api.use('naturalimage:kheops');
+
     // Client and server imports
     api.addFiles('both/index.js', [ 'client', 'server' ]);
 

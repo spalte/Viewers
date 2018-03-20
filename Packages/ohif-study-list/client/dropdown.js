@@ -12,11 +12,11 @@ Meteor.startup(() => {
         disabled: true
     }, {
         text: 'Send',
-        disabled: true,
+        action: OHIF.studylist.shareSelectedStudies,
         separatorAfter: true
     }, {
         text: 'Delete',
-        disabled: true
+        action: OHIF.studylist.deleteStudies,
     }, {
         action: OHIF.studylist.exportSelectedStudies,
         text: 'Export',
