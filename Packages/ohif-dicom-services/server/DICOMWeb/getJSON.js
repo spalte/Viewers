@@ -12,7 +12,7 @@ function makeRequest(geturl, options, callback) {
     let requestOpt = {
         hostname: parsed.hostname,
         headers: {
-            Accept: 'application/json'
+            Accept: 'application/dicom+json'
         },
         path: parsed.path,
         method: 'GET'
