@@ -61,6 +61,11 @@ export const DICOMWebServer = new SimpleSchema({
         allowedValues: ['wadouri', 'orthanc'],
         valuesLabels: ['WADO URI', 'ORTHANC']
     },
+    authorizationRoot: {
+        type: String,
+        label: 'Authorization root',
+        max: 1000
+    },
     qidoRoot: {
         type: String,
         label: 'QIDO root',

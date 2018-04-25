@@ -5,6 +5,7 @@
         "name": "DCM4CHEE",
         "wadoUriRoot": "http://localhost:8080/dcm4chee-arc/aets/DCM4CHEE/wado",
         "qidoRoot": "http://localhost:7575",
+        "authorizationRoot": "http://localhost:7575",
         "wadoRoot": "http://localhost:8080/dcm4chee-arc/aets/DCM4CHEE/rs",
         "qidoSupportsIncludeField": false,
         "imageRendering": "wadouri",

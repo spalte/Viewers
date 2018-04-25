@@ -45,8 +45,12 @@ const paletteColorCache = {
  * @param studyInstanceUid
  * @returns {string}
  */
-function buildUrl(server, studyInstanceUid) {
-    return server.wadoRoot + '/studies/' + studyInstanceUid + '/metadata';
+function buildUrl(server, studyInstanceUid, user = undefined) {
+    if (user) {
+        return server.authorizationRoot + '/users/' + user + '/studies/' + studyInstanceUid + '/metadata';
+    } else {
+        return server.wadoRoot + '/studies/' + studyInstanceUid + '/metadata';
+    }
 }
 
 /** Returns a WADO url for an instance
@@ -338,10 +342,18 @@ function resultDataToStudyMetadata(server, studyInstanceUid, resultData) {
  * @returns {{seriesList: Array, patientName: *, patientId: *, accessionNumber: *, studyDate: *, modalities: *, studyDescription: *, imageCount: *, studyInstanceUid: *}}
  */
 OHIF.studies.services.WADO.RetrieveMetadata = function(server, studyInstanceUid) {
-    var url = buildUrl(server, studyInstanceUid);
+    let userAuthToken = KHEOPS.getUserAuthToken();
+    let sub = KHEOPS.subFromJWT(userAuthToken);
+
+    var url = buildUrl(server, studyInstanceUid, sub);
+    let options = Object.assign(server.requestOptions, {});
+    if (!options.headers) {
+        options.headers = {};
+    }
+    options.headers['Authorization'] = 'Bearer ' + userAuthToken;
 
     try {
-        var result = DICOMWeb.getJSON(url, server.requestOptions);
+        var result = DICOMWeb.getJSON(url, options);
 
         var study = resultDataToStudyMetadata(server, studyInstanceUid, result.data);
         if (!study) {

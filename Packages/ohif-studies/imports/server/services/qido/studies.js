@@ -58,12 +58,11 @@ function filterToQIDOURL(server, filter, user = undefined) {
         parameters.StudyInstanceUID = studyUids;
     }
 
-    let userPath = '';
     if (user) {
-        userPath = '/users/' + user;
+        return server.authorizationRoot + '/users/' + user + '/studies?' + encodeQueryData(parameters);
+    } else {
+        return server.qidoRoot + '/studies?' + encodeQueryData(parameters);
     }
-
-    return server.qidoRoot + userPath + '/studies?' + encodeQueryData(parameters);
 }
 
 /**
