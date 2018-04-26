@@ -7,7 +7,7 @@ KHEOPS.subFromJWT = function (jwt) {
     let payloadObject = JSON.parse(payloadJSON);
 
     return payloadObject['sub'];
-}
+};
 
 KHEOPS.shareStudyWithUser = function (studyInstanceUID, user) {
 
@@ -26,7 +26,31 @@ KHEOPS.shareStudyWithUser = function (studyInstanceUID, user) {
         OHIF.log.trace();
         throw error;
     }
-}
+};
+
+KHEOPS.shareSeriesWithUser = function (studyInstanceUID, seriesInstanceUID, user) {
+
+    let authToken = KHEOPS.getUserAuthToken();
+
+    if (!user) {
+        user = Meteor.user();
+    }
+
+    let options = {
+        method: 'PUT',
+        headers: {
+            'Authorization': 'Bearer ' + authToken,
+        }
+    };
+
+    try {
+        makeTokenRequestSync('http://localhost:7575/users/' + user + '/studies/' + studyInstanceUID + '/series/' + seriesInstanceUID, options);
+    } catch (error) {
+        OHIF.log.trace();
+        throw error;
+    }
+};
+
 
 KHEOPS.deleteStudy = function (studyInstanceUID) {
     let authToken = KHEOPS.getUserAuthToken();
@@ -45,7 +69,7 @@ KHEOPS.deleteStudy = function (studyInstanceUID) {
         OHIF.log.trace();
         throw error;
     }
-}
+};
 
 KHEOPS.getSeriesAuthToken = function (seriesUID, user) {
     if (!user) {
@@ -77,7 +101,7 @@ KHEOPS.getSeriesAuthToken = function (seriesUID, user) {
     }
 
     return result.data.access_token;
-}
+};
 
 // returns a JWT access token from the Authorization server.
 KHEOPS.getUserAuthToken = function() {
@@ -95,7 +119,7 @@ KHEOPS.getUserAuthToken = function() {
             'grant_type': 'urn:ietf:params:oauth:grant-type:jwt-bearer',
             'assertion': googleOAuthIdToken,
         },
-};
+    };
 
     let result;
     try {
@@ -106,7 +130,7 @@ KHEOPS.getUserAuthToken = function() {
     }
 
     return result.data.access_token;
-}
+};
 
 const http = Npm.require('http');
 const https = Npm.require('https');
@@ -155,7 +179,7 @@ function makeTokenRequest(geturl, options, callback) {
 
     const req = requester(requestOpt, function(resp) {
         // TODO: handle errors with 400+ code
-        if (resp.statusCode != 204) {
+        if (resp.statusCode < 200 || resp.statusCode >= 300) {
             const contentType = (resp.headers['content-type'] || '').split(';')[0];
             if (jsonHeaders.indexOf(contentType) === -1) {
                 const errorMessage = `We only support json but "${contentType}" was sent by the server`;

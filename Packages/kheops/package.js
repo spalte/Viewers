@@ -12,6 +12,7 @@ Package.onUse(function(api) {
 
     api.addFiles('server/namespace.js', 'server');
     api.addFiles('server/getUserAuthToken.js', 'server');
+    api.addFiles('server/dicomWebStoreInstances.js', 'server');
 
     api.export('KHEOPS', 'server');
 });

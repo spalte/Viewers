@@ -16,6 +16,11 @@ Meteor.methods({
             throw new Meteor.Error('improper-server-config', 'No properly configured server was available over DICOMWeb or DIMSE.');
         }
 
+        let user = Meteor.user();
+        if (!user) {
+            return;
+        }
+
         try {
             if (server.type === 'dicomWeb') {
                 return OHIF.studies.services.QIDO.Studies(server, filter);

@@ -11,7 +11,18 @@ OHIF.studylist.importStudies = filesToImport => {
         return new Promise((resolve, reject) => reject('No files to upload'));
     }
 
-    const uploadMessage = ({ processed, total }) => `Uploaded files: ${processed} / ${total}`;
+    const uploadMessage = (value) => {
+        // debugger;
+        if (value && value.processed && value.total) {
+            return `Uploaded files: ${value.processed} / ${value.total}`;
+        } else {
+            return "Uploading files";
+        }
+    };
+    // const uploadMessage = ({processed, total}) => {
+    //     debugger;
+    //     return `Uploaded files: ${processed} / ${total}`;
+    // };
 
     const taskRunHandler = dialog => {
         const uploadErrorHandler = fileNames => {

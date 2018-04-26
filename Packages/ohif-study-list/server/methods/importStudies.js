@@ -43,6 +43,8 @@ Meteor.methods({
         const server = OHIF.servers.getCurrentServer();
         if (server && server.type === 'dimse') {
             return true;
+        } else if (server && server.type === 'dicomWeb') {
+            return true
         }
     },
     /**
@@ -64,6 +66,8 @@ Meteor.methods({
         if (server.type === 'dicomWeb') {
             //TODO: Support importing studies into dicomWeb
             OHIF.log.warn('Importing studies into dicomWeb is currently not supported.');
+            importStudiesDicomWeb(studiesToImport, studyImportStatusId);
+
         } else if (server.type === 'dimse') {
             importStudiesDIMSE(studiesToImport, studyImportStatusId);
         }
@@ -87,6 +91,58 @@ Meteor.methods({
         OHIF.studylist.collections.StudyImportStatus.remove(id);
     }
 });
+
+function importStudiesDicomWeb(studiesToImport, studyImportStatusId) {
+    if (!studiesToImport || !studyImportStatusId) {
+        return;
+    }
+    //  Perform C-Store to import studies and handle the callbacks to update import status
+    KHEOPS.dicomWebStoreInstances(studiesToImport, function(err, file) {
+        try {
+            //  Use fiber to be able to modify meteor collection in callback
+            fiber(function() {
+                try {
+                    //  Update the import status
+                    if (err) {
+                        OHIF.studylist.collections.StudyImportStatus.update(
+                            { _id: studyImportStatusId },
+                            { $inc: { numberOfStudiesFailed: 1 } }
+                        );
+                        OHIF.log.warn('Failed to import study via DicomWeb: ', file, err);
+                    } else {
+                        OHIF.studylist.collections.StudyImportStatus.update(
+                            { _id: studyImportStatusId },
+                            { $inc: { numberOfStudiesImported: 1 } }
+                        );
+                        OHIF.log.info('Study successfully imported via DicomWeb: ', file);
+                    }
+
+                } catch(error) {
+                    OHIF.studylist.collections.StudyImportStatus.update(
+                        { _id: studyImportStatusId },
+                        { $inc: { numberOfStudiesFailed: 1 } }
+                    );
+                    OHIF.log.warn('Failed to import study via DicomWeb: ', file, error);
+                } finally {
+                    //  The import operation of this file is completed, so delete it if still exists
+                    if (fileExists(file)) {
+                        fs.unlink(file);
+                    }
+                }
+
+            }).run();
+        } catch(error) {
+            OHIF.studylist.collections.StudyImportStatus.update(
+                { _id: studyImportStatusId },
+                { $inc: { numberOfStudiesFailed: 1 } }
+            );
+            OHIF.log.warn('Failed to import study via DicomWeb: ', file, error);
+        }
+
+    });
+}
+
+
 
 function importStudiesDIMSE(studiesToImport, studyImportStatusId) {
     if (!studiesToImport || !studyImportStatusId) {
