@@ -1,3 +1,4 @@
+import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
 import { Session } from 'meteor/session';
 import { Router } from 'meteor/iron:router';
@@ -23,7 +24,17 @@ Template.ohifViewer.onCreated(() => {
         text: 'About',
         icon: 'fa fa-info'
     }, {
-        action: () => Meteor.logout(),
+        action: () => {
+            Meteor.logout(function(){
+                let ifrm = document.createElement("IFRAME");
+                ifrm.setAttribute("src", 'https://accounts.google.com/Logout');
+                ifrm.setAttribute("id", "googleLogout");
+                ifrm.setAttribute("style", "display:none;");
+                // ifrm.style.width = 1+"px";
+                // ifrm.style.height = 1+"px";
+                document.body.appendChild(ifrm);
+            });
+        },
         text: 'Logout',
         iconClasses: 'logout',
         // iconSvgUse: 'packages/ohif_user-management/assets/user-menu-icons.svg#logout'
