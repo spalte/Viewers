@@ -9,7 +9,7 @@ KHEOPS.subFromJWT = function (jwt) {
     return payloadObject['sub'];
 };
 
-KHEOPS.shareStudyWithUser = function (studyInstanceUID, user) {
+KHEOPS.shareStudyWithUser = function (studyInstanceUID, userId) {
 
     let authToken = KHEOPS.getUserAuthToken();
 
@@ -21,19 +21,19 @@ KHEOPS.shareStudyWithUser = function (studyInstanceUID, user) {
     };
 
     try {
-        makeTokenRequestSync('http://localhost:7575/users/' + user + '/studies/' + studyInstanceUID, options);
+        makeTokenRequestSync('http://localhost:7575/users/' + userId + '/studies/' + studyInstanceUID, options);
     } catch (error) {
         OHIF.log.trace();
         throw error;
     }
 };
 
-KHEOPS.shareSeriesWithUser = function (studyInstanceUID, seriesInstanceUID, user) {
+KHEOPS.shareSeriesWithUser = function (studyInstanceUID, seriesInstanceUID, userId) {
 
     let authToken = KHEOPS.getUserAuthToken();
 
-    if (!user) {
-        user = Meteor.user();
+    if (!userId) {
+        userId = Meteor.user().services.google.id;
     }
 
     let options = {
@@ -44,7 +44,7 @@ KHEOPS.shareSeriesWithUser = function (studyInstanceUID, seriesInstanceUID, user
     };
 
     try {
-        makeTokenRequestSync('http://localhost:7575/users/' + user + '/studies/' + studyInstanceUID + '/series/' + seriesInstanceUID, options);
+        makeTokenRequestSync('http://localhost:7575/users/' + userId + '/studies/' + studyInstanceUID + '/series/' + seriesInstanceUID, options);
     } catch (error) {
         OHIF.log.trace();
         throw error;
