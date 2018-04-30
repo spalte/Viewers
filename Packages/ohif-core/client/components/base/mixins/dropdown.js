@@ -44,7 +44,7 @@ OHIF.mixins.dropdown = new OHIF.Mixin({
                     destroyHandle();
                     clearTimeout(timeout);
                 });
-                $dropdown.removeClass('open');
+                // $dropdown.removeClass('open');
             };
 
             // Destroy the view when the promise is fullfilled
