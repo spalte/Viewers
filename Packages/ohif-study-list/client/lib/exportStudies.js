@@ -1,5 +1,7 @@
 import { JSZip } from 'meteor/silentcicero:jszip';
 import { OHIF } from 'meteor/ohif:core';
+import {Meteor} from "meteor/meteor";
+import {Accounts} from "meteor/accounts-base";
 
 const getNumberOfFilesToExport = function(studiesToExport) {
     let numberOfFilesToExport = 0;
@@ -145,6 +147,13 @@ const downloadDicomFile = instance => {
         xhr = new XMLHttpRequest();
         xhr.open('GET', instance.wadouri, true);
         xhr.responseType = 'blob';
+
+        const userId = Meteor.userId();
+        const loginToken = Accounts._storedLoginToken();
+        if (userId && loginToken) {
+            xhr.setRequestHeader("x-user-id", userId);
+            xhr.setRequestHeader("x-auth-token", loginToken);
+        }
 
         xhr.onload = () => {
             if (xhr.readyState === 4 && xhr.status !== 200) {
