@@ -126,12 +126,24 @@ Template.studylistStudy.events({
         // Remove the ID so we can directly insert this into our client-side collection
         delete data._id;
 
-        if (event.shiftKey) {
-            handleShiftClick($studyRow, data);
-        } else if (event.ctrlKey || event.metaKey) {
-            handleCtrlClick($studyRow, data);
+        let isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+
+        if (isMac) {
+            if (event.shiftKey) {
+                handleShiftClick($studyRow, data);
+            } else if ( event.metaKey) {
+                handleCtrlClick($studyRow, data);
+            } else if ( !event.ctrlKey) {
+                doSelectSingleRow($studyRow, data);
+            }
         } else {
-            doSelectSingleRow($studyRow, data);
+            if (event.shiftKey) {
+                handleShiftClick($studyRow, data);
+            } else if (event.ctrlKey || event.metaKey) {
+                handleCtrlClick($studyRow, data);
+            } else {
+                doSelectSingleRow($studyRow, data);
+            }
         }
     },
 
