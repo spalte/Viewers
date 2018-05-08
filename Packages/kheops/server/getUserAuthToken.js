@@ -21,7 +21,8 @@ KHEOPS.shareStudyWithUser = function (studyInstanceUID, userId) {
     };
 
     try {
-        makeTokenRequestSync('http://localhost:7575/users/' + userId + '/studies/' + studyInstanceUID, options);
+        let authorizationRoot = OHIF.servers.getCurrentServer().authorizationRoot;
+        makeTokenRequestSync(authorizationRoot + '/users/' + userId + '/studies/' + studyInstanceUID, options);
     } catch (error) {
         OHIF.log.trace();
         throw error;
@@ -44,7 +45,8 @@ KHEOPS.shareSeriesWithUser = function (studyInstanceUID, seriesInstanceUID, user
     };
 
     try {
-        makeTokenRequestSync('http://localhost:7575/users/' + userId + '/studies/' + studyInstanceUID + '/series/' + seriesInstanceUID, options);
+        let authorizationRoot = OHIF.servers.getCurrentServer().authorizationRoot;
+        makeTokenRequestSync(authorizationRoot + '/users/' + userId + '/studies/' + studyInstanceUID + '/series/' + seriesInstanceUID, options);
     } catch (error) {
         OHIF.log.trace();
         throw error;
@@ -64,7 +66,8 @@ KHEOPS.deleteStudy = function (studyInstanceUID) {
     };
 
     try {
-        makeTokenRequestSync('http://localhost:7575/users/' + userId + '/studies/' + studyInstanceUID, options);
+        let authorizationRoot = OHIF.servers.getCurrentServer().authorizationRoot;
+        makeTokenRequestSync(authorizationRoot + '/users/' + userId + '/studies/' + studyInstanceUID, options);
     } catch (error) {
         OHIF.log.trace();
         throw error;
@@ -94,7 +97,8 @@ KHEOPS.getSeriesAuthToken = function (seriesUID, user) {
 
     let result;
     try {
-        result = makeTokenRequestSync('http://localhost:7575/token', options);
+        let authorizationRoot = OHIF.servers.getCurrentServer().authorizationRoot;
+        result = makeTokenRequestSync(authorizationRoot + '/token', options);
     } catch (error) {
         OHIF.log.trace();
         throw error;
@@ -123,7 +127,8 @@ KHEOPS.getUserAuthToken = function() {
 
     let result;
     try {
-        result = makeTokenRequestSync('http://localhost:7575/token', options);
+        let authorizationRoot = OHIF.servers.getCurrentServer().authorizationRoot;
+        result = makeTokenRequestSync(authorizationRoot + '/token', options);
     } catch (error) {
         OHIF.log.trace();
         throw error;
