@@ -145,7 +145,8 @@ function storeInstance(file) {
 
     let result;
     try {
-        result = makestoreInstanceRequestSync('http://localhost:8080/dcm4chee-arc/aets/DCM4CHEE/rs/studies', options);
+        let wadoRoot = OHIF.servers.getCurrentServer().wadoRoot;
+        result = makestoreInstanceRequestSync(wadoRoot + '/studies', options);
         try {
             KHEOPS.shareSeriesWithUser(result.data.studyUID, result.data.seriesUID);
         }catch (error) {
